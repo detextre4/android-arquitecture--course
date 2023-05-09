@@ -7,5 +7,5 @@ interface CouponView {
     fun getCoupons()
 
     // PRESENTER
-    fun showCoupons(coupons : List<Coupon>)
+    fun showCoupons(coupons : List<Coupon>?)
 }

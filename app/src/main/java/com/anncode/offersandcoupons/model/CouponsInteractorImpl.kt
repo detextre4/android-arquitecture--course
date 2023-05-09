@@ -7,6 +7,6 @@ class CouponsInteractorImpl(var couponPresenter : CouponPresenter) : CouponsInte
     private var couponRepository : CouponsRepository = CouponsRepositoryImpl(couponPresenter)
 
     override fun getCouponsApi() {
-        TODO("Not yet implemented")
+        couponRepository.getCouponsApi()
     }
 }

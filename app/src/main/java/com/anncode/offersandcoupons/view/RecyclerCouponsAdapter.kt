@@ -12,7 +12,7 @@ import com.anncode.offersandcoupons.R
 import com.anncode.offersandcoupons.model.Coupon
 import com.squareup.picasso.Picasso
 
-class RecyclerCouponsAdapter(var coupons : ArrayList<Coupon>, var resource: Int) : RecyclerView.Adapter<RecyclerCouponsAdapter.CardCouponHolder>() {
+class RecyclerCouponsAdapter(var coupons : List<Coupon>?, var resource: Int) : RecyclerView.Adapter<RecyclerCouponsAdapter.CardCouponHolder>() {
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): CardCouponHolder {
         val view: View = LayoutInflater.from(p0.context).inflate(resource, p0, false)
@@ -20,11 +20,11 @@ class RecyclerCouponsAdapter(var coupons : ArrayList<Coupon>, var resource: Int)
     }
 
     override fun getItemCount(): Int {
-        return coupons.size
+        return coupons?.size ?: 0
     }
 
     override fun onBindViewHolder(p0: CardCouponHolder, p1: Int) {
-        val coupon = coupons[p1]
+        val coupon = coupons?.get(p1)
         p0.setDataCard(coupon)
     }
 
@@ -41,13 +41,13 @@ class RecyclerCouponsAdapter(var coupons : ArrayList<Coupon>, var resource: Int)
             v.setOnClickListener(this)
         }
 
-        fun setDataCard(coupon: Coupon){
+        fun setDataCard(coupon: Coupon?){
             this.coupon = coupon
-            Picasso.get().load(coupon.imageUrl).resize(520, 520).centerCrop().into(imgCoupon)
-            tvTitle.text = coupon.title
-            tvDescriptionShort.text = coupon.descriptionShort
-            tvCategory.text = coupon.category
-            tvDate.text = coupon.endDate
+            Picasso.get().load(coupon?.imageUrl).resize(520, 520).centerCrop().into(imgCoupon)
+            tvTitle.text = coupon?.title
+            tvDescriptionShort.text = coupon?.descriptionShort
+            tvCategory.text = coupon?.category
+            tvDate.text = coupon?.endDate
 
         }
 

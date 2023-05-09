@@ -12,7 +12,7 @@
         <item name="colorControlHighlight">#FFFFFF</item>
         <item name="colorButtonNormal">#726fda</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:borderlessButtonStyle"></item>
+<!--        <item name="android:borderlessButtonStyle"></item>-->
     </style>
 
 </resources>
