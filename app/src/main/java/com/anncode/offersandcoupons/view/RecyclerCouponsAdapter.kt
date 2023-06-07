@@ -1,63 +1,62 @@
 package com.anncode.offersandcoupons.view
 
 import android.content.Intent
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import com.anncode.offersandcoupons.BR
 import com.anncode.offersandcoupons.R
 import com.anncode.offersandcoupons.model.Coupon
+import com.anncode.offersandcoupons.viewModel.CouponViewModel
 import com.squareup.picasso.Picasso
+import java.text.FieldPosition
 
-class RecyclerCouponsAdapter(var coupons : List<Coupon>?, var resource: Int) : RecyclerView.Adapter<RecyclerCouponsAdapter.CardCouponHolder>() {
+class RecyclerCouponsAdapter(var couponViewModel : CouponViewModel, var resource: Int) : RecyclerView.Adapter<RecyclerCouponsAdapter.CardCouponHolder>() {
+    var coupon : List<Coupon>? = null
+
+    fun setCouponsList(coupons : List<Coupon>) {
+        this.coupon = coupons
+    }
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): CardCouponHolder {
-        val view: View = LayoutInflater.from(p0.context).inflate(resource, p0, false)
-        return CardCouponHolder(view)
+        val layoutInflater : LayoutInflater = LayoutInflater.from(p0.context)
+        val binding : ViewDataBinding = DataBindingUtil.inflate(layoutInflater, p1, p0, false)
+        return CardCouponHolder(binding)
     }
 
     override fun getItemCount(): Int {
-        return coupons?.size ?: 0
+        return coupon?.size ?: 0
     }
 
     override fun onBindViewHolder(p0: CardCouponHolder, p1: Int) {
-        val coupon = coupons?.get(p1)
-        p0.setDataCard(coupon)
+        p0.setDataCard(couponViewModel, p1)
     }
 
-    class CardCouponHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
+    override fun getItemViewType(position: Int): Int {
+        return getLayoutIdForPosition(position)
+    }
 
-        private var coupon: Coupon? = null
-        private var imgCoupon: ImageView = v.findViewById(R.id.imgCoupon)
-        private var tvTitle: TextView = v.findViewById(R.id.tvTitle)
-        private var tvDescriptionShort: TextView = v.findViewById(R.id.tvDescriptionShort)
-        private var tvCategory: TextView = v.findViewById(R.id.tvCategory)
-        private var tvDate: TextView = v.findViewById(R.id.tvDate)
+    fun getLayoutIdForPosition(position : Int) : Int {
+        return resource
+    }
+
+    class CardCouponHolder(binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+        private var binding : ViewDataBinding? = null
 
         init {
-            v.setOnClickListener(this)
+            this.binding = binding
         }
 
-        fun setDataCard(coupon: Coupon?){
-            this.coupon = coupon
-            Picasso.get().load(coupon?.imageUrl).resize(520, 520).centerCrop().into(imgCoupon)
-            tvTitle.text = coupon?.title
-            tvDescriptionShort.text = coupon?.descriptionShort
-            tvCategory.text = coupon?.category
-            tvDate.text = coupon?.endDate
-
-        }
-
-        override fun onClick(v: View) {
-            Log.i("CLICK Coupon: ", coupon?.title)
-            val context = v.context
-            val showPhotoIntent = Intent(context, CouponDetailActivity::class.java)
-            showPhotoIntent.putExtra("COUPON", coupon)
-            context.startActivity(showPhotoIntent)
-
+        fun setDataCard(couponViewModel : CouponViewModel, position : Int) {
+            binding?.setVariable(BR.model, couponViewModel)
+            binding?.setVariable(BR.position, position)
+            binding?.executePendingBindings()
         }
     }
 }

@@ -1,9 +1,7 @@
 package com.anncode.offersandcoupons.model
 
 import android.util.Log
-import com.anncode.offersandcoupons.R
-import com.anncode.offersandcoupons.presenter.CouponPresenter
-import com.anncode.offersandcoupons.view.RecyclerCouponsAdapter
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -12,19 +10,24 @@ import retrofit2.Response
 
 
 @Suppress("UNREACHABLE_CODE")
-class CouponsRepositoryImpl(var couponPresenter : CouponPresenter) : CouponsRepository {
+class CouponsRepositoryImpl : CouponsRepository {
+    private val coupons = MutableLiveData<List<Coupon>>()
+    // Subject MutableLiveData
+    // Observers List Coupon
+    // Change List Coupon - MutableLiveData
+    // Observe
 
     // All connexion logic
-    override fun getCouponsApi() {
+    override fun callCouponsApi() {
         // CONTROLLER
-        val coupons : MutableList<Coupon> = mutableListOf()
+        val couponsList : MutableList<Coupon> = mutableListOf()
         val apiAdapter = ApiAdapter()
         val apiService = apiAdapter.getClientService()
         val call = apiService.getCoupons()
 
         call.enqueue(object : Callback<JsonObject> {
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Log.e("ERROR: ", t.message)
+                Log.e("ERROR: ", t.message ?: "Unknown error occurred")
                 t.stackTrace
             }
 
@@ -33,12 +36,16 @@ class CouponsRepositoryImpl(var couponPresenter : CouponPresenter) : CouponsRepo
                 offersJsonArray?.forEach { jsonElement: JsonElement ->
                     val jsonObject = jsonElement.asJsonObject
                     val coupon = Coupon(jsonObject)
-                    coupons.add(coupon)
+                    couponsList.add(coupon)
                 }
                 // VIEW
-                couponPresenter.showCoupons(coupons)
+                coupons.value = couponsList
             }
         })
         // CONTROLLER
+    }
+
+    override fun getCoupons() : MutableLiveData<List<Coupon>> {
+        return coupons
     }
 }
